@@ -1,5 +1,5 @@
 # =============================================================================
-# DSY1107 - PARCIAL1 - Configuracion del backend.
+# DSY1107 - PARCIAL2 - Configuracion del backend.
 #
 # Toodo lo de aqui se puede pisar con variables de entorno, que es como se
 # configura en ECS (terraform/ecs.tf) y en GitHub Actions (backend_deploy.yml):

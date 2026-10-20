@@ -1,4 +1,4 @@
-# Estructura del repositorio — DSY1107-PARCIAL1 · EA1
+# Estructura del repositorio — DSY1107-PARCIAL2 · EA2
 
 Este documento define **cómo se organiza el repositorio de la Evaluación PArcial 1 correspondiente a la experiencia de Aprendizaje 1**. 
 

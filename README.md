@@ -1,4 +1,4 @@
-# DSY1107 - PARCIAL1 - Solicitudes de Vacaciones
+# DSY1107 - PARCIAL2 - Solicitudes de Vacaciones
 
 Sistema de solicitante/aprobador: un usuario solicita vacaciones, otro las
 aprueba o rechaza con un comentario.
