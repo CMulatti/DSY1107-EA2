@@ -1,7 +1,7 @@
 # El user pool es el "tenant" de la guía 1.2.3: el directorio donde viven los
 # usuarios y, a la vez, el servidor de autorización que emite los tokens.
 resource "aws_cognito_user_pool" "pool" {
-  name = "dsy1107-vacaciones"
+  name = "dsy1107-vacaciones-2"
 
   user_pool_tier = "ESSENTIALS"
 
@@ -32,7 +32,7 @@ resource "aws_cognito_user_pool" "pool" {
 }
 
 resource "aws_cognito_user_pool_domain" "hosted_ui" {
-  domain       = "dsy1107-vacaciones"
+  domain       = "dsy1107-vacaciones-2"
   user_pool_id = aws_cognito_user_pool.pool.id
 
   # 1 = Hosted UI clásica. La versión 2 (Managed Login) exige definir un
@@ -179,4 +179,17 @@ resource "aws_cognito_user_in_group" "demo_solicitante2" {
   user_pool_id = aws_cognito_user_pool.pool.id
   group_name   = aws_cognito_user_group.solicitantes.name
   username     = aws_cognito_user.demo_solicitante2.username
+}
+
+
+
+
+#This creates nothing on AWS. But it makes terraform output print a value Terraform already knows.
+# application.yaml and AWS CLI commands will need this.
+output "cognito_pool_id" {
+  value = aws_cognito_user_pool.pool.id
+}
+
+output "cognito_issuer" {
+  value = "https://${aws_cognito_user_pool.pool.endpoint}"
 }

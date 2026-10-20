@@ -38,7 +38,7 @@ spring:
   # arranca -- eso es preferible a arrancar con una clave filtrada en el codigo.
   # ---------------------------------------------------------------------------
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://dsy1107-db-grupoxx-mulatti-parcial1.cz0jxskmpfsl.us-east-1.rds.amazonaws.com:5432/dsy1107?sslmode=require}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://dsy1107-db-grupoxx-mulatti-parcial2.cncwygkwqac0.us-east-1.rds.amazonaws.com:5432/dsy1107?sslmode=require}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD}
 
@@ -63,7 +63,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_DNST65Syk
+          issuer-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_QOsAjFxhO
+
 
 
 
@@ -82,7 +83,7 @@ backend:
     # despliegue real el CORS lo pone el API Gateway. Sin barra final.
     origenes:
       - http://localhost:5173
-      - https://main.d92yenvttrbhi.amplifyapp.com
+      - https://main.d2ou1c1vjbjjq4.amplifyapp.com
 
 # -----------------------------------------------------------------------------
 # Actuator: /actuator/health es el health check que usa ECS (healthCheck en

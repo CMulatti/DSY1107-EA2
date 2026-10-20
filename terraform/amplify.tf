@@ -1,5 +1,5 @@
 resource "aws_amplify_app" "front" {
-  name     = "dsy1107-grupoxx-mulatti-parcial1"
+  name     = "dsy1107-grupoxx-mulatti-parcial2"
   platform = "WEB"
 
   custom_rule {

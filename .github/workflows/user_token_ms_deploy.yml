@@ -51,7 +51,7 @@ jobs:
       # rotacion de cuenta del Learner Lab. No hay nada que resincronizar.
       #
       # Si clonas este repo para otro estudiante, este es el valor que cambia.
-      FUNCION: user-token-ms-grupoxx-mulatti-parcial1
+      FUNCION: user-token-ms-grupoxx-mulatti-parcial2
 
     defaults:
       run:
