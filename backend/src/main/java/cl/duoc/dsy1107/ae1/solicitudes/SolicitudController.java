@@ -1,5 +1,6 @@
 package cl.duoc.dsy1107.ae1.solicitudes;
 
+import cl.duoc.dsy1107.ae1.mensajeria.SolicitudEventPublisher;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
@@ -21,8 +22,11 @@ public class SolicitudController {
 
     private final SolicitudService servicio;
 
-    public SolicitudController(SolicitudService servicio) {
+    private final SolicitudEventPublisher publicador;
+
+    public SolicitudController(SolicitudService servicio, SolicitudEventPublisher publicador) {
         this.servicio = servicio;
+        this.publicador = publicador;
     }
 
     public record SolicitudNueva(
@@ -84,6 +88,7 @@ public class SolicitudController {
             @Valid @RequestBody SolicitudNueva datos,
             @RequestHeader("Authorization") String authorization) {
         Solicitud creada = servicio.crear(claims(authorization), datos.fechaInicio(), datos.fechaFin(), datos.motivo());
+        publicador.solicitudCreada(creada);
         SolicitudVista vista = SolicitudVista.de(creada);
         return ResponseEntity.created(URI.create("/solicitudes/" + vista.id())).body(vista);
     }
@@ -107,6 +112,8 @@ public class SolicitudController {
     /** Solo aprobadores llegan aquí: lo garantiza authorization_scopes en la ruta. */
     @PutMapping("/{id}/decision")
     public SolicitudVista decidir(@PathVariable long id, @Valid @RequestBody Decision decision) {
-        return SolicitudVista.de(servicio.decidir(id, decision.estado(), decision.comentario()));
+        Solicitud decidida = servicio.decidir(id, decision.estado(), decision.comentario());
+        publicador.solicitudDecidida(decidida);
+        return SolicitudVista.de(decidida);
     }
 }
