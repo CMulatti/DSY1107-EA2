@@ -1,0 +1,64 @@
+# Lo común a los tres nodos, escrito una sola vez (ancla &rabbit)
+x-rabbit: &rabbit
+  image: rabbitmq:4-management
+  environment:
+    RABBITMQ_DEFAULT_USER: admin
+    RABBITMQ_DEFAULT_PASS: admin123
+    RABBITMQ_ERLANG_COOKIE: cookie_vacaciones_2026   # IGUAL en los tres
+  networks:
+    - rabbitmq_cluster
+  healthcheck:
+    test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+    interval: 15s
+    timeout: 10s
+    retries: 10
+    start_period: 30s
+
+services:
+  rabbitmq-1:
+    <<: *rabbit
+    container_name: rabbitmq-1
+    hostname: rabbitmq-1          # el nombre del nodo será rabbit@rabbitmq-1
+    ports:
+      - "5672:5672"               # AMQP
+      - "15672:15672"             # panel web
+    volumes:
+      - rabbitmq_data_1:/var/lib/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+
+  rabbitmq-2:
+    <<: *rabbit
+    container_name: rabbitmq-2
+    hostname: rabbitmq-2
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    volumes:
+      - rabbitmq_data_2:/var/lib/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+    depends_on:
+      rabbitmq-1:
+        condition: service_healthy
+
+  rabbitmq-3:
+    <<: *rabbit
+    container_name: rabbitmq-3
+    hostname: rabbitmq-3
+    ports:
+      - "5674:5672"
+      - "15674:15672"
+    volumes:
+      - rabbitmq_data_3:/var/lib/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+    depends_on:
+      rabbitmq-1:
+        condition: service_healthy
+
+volumes:
+  rabbitmq_data_1:
+  rabbitmq_data_2:
+  rabbitmq_data_3:
+
+networks:
+  rabbitmq_cluster:
+    driver: bridge

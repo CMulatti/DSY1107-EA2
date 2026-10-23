@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: notificaciones
+
+  rabbitmq:
+    # Los tres nodos del cluster. Si uno cae, el cliente se conecta al siguiente.
+    addresses: localhost:5672,localhost:5673,localhost:5674
+    address-shuffle-mode: random
+    username: admin
+    password: ${RABBITMQ_PASSWORD:admin123}
+
+    listener:
+      simple:
+        #El consumidor confirma (ACK) a mano, cuando termina su trabajo.
+        acknowledge-mode: manual
+        # Un mensaje a la vez por consumidor.
+        prefetch: 1
+
+# Todos los nombres de la mensajería, en un solo lugar.
+app:
+  rabbit:
+    exchange-events: solicitudes.events     # topic: recibe los eventos del backend
+    exchange-dlx: solicitudes.dlx           # direct: recibe los mensajes fallidos
+    dlq-ttl-ms: 86400000                    # los mensajes fallidos se borran solos a las 24 h
+
+    aprobador:                              # aviso al aprobador: llegó una solicitud
+      queue: notif.aprobador
+      routing-key: solicitud.creada
+      dlq: notif.aprobador.dlq
+      dlq-routing-key: aprobador.dead
+
+    solicitante:                            # aviso al solicitante: se decidió su solicitud
+      queue: notif.solicitante
+      routing-key: solicitud.decidida
+      dlq: notif.solicitante.dlq
+      dlq-routing-key: solicitante.dead
+
+    auditoria:                              # registro de todos los eventos
+      queue: auditoria.solicitudes
+      routing-key: solicitud.*
+      dlq: auditoria.solicitudes.dlq
+      dlq-routing-key: auditoria.dead
