@@ -1,8 +1,8 @@
 # DSY1107 PARCIAL2: Mensajería asíncrona con RabbitMQ
 
 Esta etapa agrega RabbitMQ al sistema de solicitudes de vacaciones (solicitante / aprobador)
-sin cambiar su lógica: crear y decidir una solicitud funciona igual que antes, y además
-publica un evento que otros programas procesan por su cuenta.
+sin cambiar su lógica: crear y decidir una solicitud funciona igual que antes, y además el
+backend publica un evento que el servicio `notificaciones` procesa por su cuenta. 
 
 ## 1. Resumen
 
