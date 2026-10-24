@@ -231,7 +231,7 @@ lista cada campo con su mensaje.
 
 ## 11. Códigos HTTP del administrador
 
-| Código | Significado | Cuándo ocurre |
+| Código | | Cuándo ocurre |
 |---|---|---|
 | **200** | Todo bien, con respuesta | `GET /queues/{name}` de una cola que existe |
 | **201** | Creado | Cola, exchange o binding declarado. Repetir la misma declaración también da 201 (declarar algo idéntico es inofensivo) |
@@ -241,8 +241,9 @@ lista cada campo con su mensaje.
 | **409** | Conflicto: RabbitMQ rechazó la operación | La cola ya existe con otros parámetros (`PRECONDITION_FAILED`), o un binding apunta a una cola/exchange inexistente (`NOT_FOUND`). El campo `detalle` trae el motivo de RabbitMQ |
 | **503** | Servicio no disponible | No hay conexión con el cluster de RabbitMQ |
 
-El tutorial original respondía "201 creada" aunque RabbitMQ rechazara la operación.
+En nuestros ejercicios de clase, nos respondía "201 creada" aunque RabbitMQ rechazara la operación.
 Aquí un rechazo nunca se informa como éxito.
+(Evidencias disponibles en el informe)
 
 ## 12. Cómo levantar y probar
 
