@@ -170,14 +170,13 @@ pensado para detectar duplicados (ver sección 12).
 
 ## 9. Consumidor `notificaciones` y confirmación manual (ACK / NACK)
 
-Cada `@RabbitListener` lee una cola, interpreta el JSON y **decide explícitamente**
-qué le dice a RabbitMQ:
+Cada `@RabbitListener` lee los mensajes de una **cola**, interpreta el JSON y decide explícitamente qué le dice a RabbitMQ:
 
 ```mermaid
 flowchart TD
     M["Llega un mensaje"] --> P{"¿El JSON es válido<br/>y está completo?"}
     P -->|"sí"| W["Se 'envía' el correo (log)"]
-    W --> A["basicAck: terminé, bórralo"]
+    W --> A["basicAck: terminé, ya puedes bórralo"]
     P -->|"no"| E["Se registra el error (log)"]
     E --> N["basicNack sin reencolar"]
     N --> D["RabbitMQ lo manda al DLX<br/>y queda en la DLQ"]
