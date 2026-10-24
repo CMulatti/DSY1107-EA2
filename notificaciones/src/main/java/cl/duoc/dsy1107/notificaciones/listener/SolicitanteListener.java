@@ -1,5 +1,8 @@
 package cl.duoc.dsy1107.notificaciones.listener;
 
+import cl.duoc.dsy1107.notificaciones.evento.EventoInvalidoException;
+import cl.duoc.dsy1107.notificaciones.evento.EventoParser;
+import cl.duoc.dsy1107.notificaciones.evento.SolicitudEvento;
 import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,25 +22,38 @@ public class SolicitanteListener {
 
     private static final Logger log = LoggerFactory.getLogger(SolicitanteListener.class);
 
+    private final EventoParser parser;
+
+    public SolicitanteListener(EventoParser parser) {
+        this.parser = parser;
+    }
+
     // El nombre viene del application.yaml (app.rabbit.solicitante.queue).
     @RabbitListener(queues = "${app.rabbit.solicitante.queue}")
     public void recibir(String mensaje,
                         Channel canal,
                         @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
         try {
-            log.info("[SOLICITANTE] Mensaje recibido: {}", mensaje);
+            SolicitudEvento evento = parser.parsear(mensaje);
+            log.info("[SOLICITANTE] Evento recibido: {}", evento.messageId());
 
-            // SOLO PARA PRUEBAS: simula un fallo para ver cómo llega a la DLQ.
-            if (mensaje.contains("FALLAR")) {
-                throw new IllegalStateException("Fallo simulado al enviar el correo");
+            if (!"APROBADA".equals(evento.estado()) && !"RECHAZADA".equals(evento.estado())) {
+                throw new EventoInvalidoException("Una solicitud decidida debe estar APROBADA o RECHAZADA");
             }
 
-            log.info("[SOLICITANTE] Correo (simulado) enviado al solicitante");
+            String comentario = evento.comentarioAprobador() == null
+                    ? "(sin comentario)" : evento.comentarioAprobador();
+
+            log.info("[SOLICITANTE] Correo (simulado) a {}: tu solicitud #{} fue {}. Comentario del aprobador: {}",
+                    evento.solicitanteEmail(), evento.solicitudId(), evento.estado(), comentario);
+
             canal.basicAck(deliveryTag, false);
+            log.info("[SOLICITANTE] ACK enviado (deliveryTag={})", deliveryTag);
 
         } catch (Exception e) {
-            log.error("[SOLICITANTE] Falló el procesamiento, el mensaje va a la DLQ: {}", e.getMessage());
+            log.error("[SOLICITANTE] Mensaje inválido o con fallo, va a la DLQ: {}", e.getMessage());
             canal.basicNack(deliveryTag, false, false);
+            log.warn("[SOLICITANTE] NACK enviado sin reencolar (deliveryTag={})", deliveryTag);
         }
     }
 }

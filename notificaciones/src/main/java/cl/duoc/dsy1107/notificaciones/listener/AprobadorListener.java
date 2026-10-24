@@ -1,5 +1,7 @@
 package cl.duoc.dsy1107.notificaciones.listener;
 
+import cl.duoc.dsy1107.notificaciones.evento.EventoParser;
+import cl.duoc.dsy1107.notificaciones.evento.SolicitudEvento;
 import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,25 +21,31 @@ public class AprobadorListener {
 
     private static final Logger log = LoggerFactory.getLogger(AprobadorListener.class);
 
-    // El nombre de la cola viene del application.yaml, no se escribe a mano.
-    @RabbitListener(queues = "${app.rabbit.aprobador.queue}")  //this annotation tells Spring AMQP to register a listener for the specified RabbitMQ queue. Spring sees the annotation and sets up a listener container and a RabbitMQ consumer to receive messages from the configured queue.
+    private final EventoParser parser;
+
+    public AprobadorListener(EventoParser parser) {
+        this.parser = parser;
+    }
+
+    // El nombre viene del application.yaml (app.rabbit.aprobador.queue).
+    @RabbitListener(queues = "${app.rabbit.aprobador.queue}")
     public void recibir(String mensaje,
                         Channel canal,
                         @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
         try {
-            log.info("[APROBADOR] Mensaje recibido: {}", mensaje);
+            SolicitudEvento evento = parser.parsear(mensaje);
+            log.info("[APROBADOR] Evento recibido: {}", evento.messageId());
 
-            // SOLO PARA PRUEBAS: simula un fallo para ver cómo llega a la DLQ.
-            if (mensaje.contains("FALLAR")) {
-                throw new IllegalStateException("Fallo simulado al enviar el correo");
-            }
+            log.info("[APROBADOR] Correo (simulado) al aprobador: nueva solicitud #{} de {}, del {} al {}",
+                    evento.solicitudId(), evento.solicitanteEmail(), evento.fechaInicio(), evento.fechaFin());
 
-            log.info("[APROBADOR] Correo (simulado) enviado al aprobador");
-            canal.basicAck(deliveryTag, false);          // ACK: terminé, bórralo
+            canal.basicAck(deliveryTag, false);
+            log.info("[APROBADOR] ACK enviado (deliveryTag={})", deliveryTag);
 
         } catch (Exception e) {
-            log.error("[APROBADOR] Falló el procesamiento, el mensaje va a la DLQ: {}", e.getMessage());
-            canal.basicNack(deliveryTag, false, false);  // NACK sin reencolar: va al DLX
+            log.error("[APROBADOR] Mensaje inválido o con fallo, va a la DLQ: {}", e.getMessage());
+            canal.basicNack(deliveryTag, false, false);
+            log.warn("[APROBADOR] NACK enviado sin reencolar (deliveryTag={})", deliveryTag);
         }
     }
 }
