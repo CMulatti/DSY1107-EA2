@@ -14,7 +14,7 @@ publica un evento que otros programas procesan por su cuenta.
 | `rabbitadmin/` | Servicio nuevo, API REST para administrar colas, exchanges y bindings | 8097 |
 
 
-Por indicación del docente, RabbitMQ y los microservicios de esta etapa se ejecutan en local.
+RabbitMQ y los microservicios de esta etapa se ejecutan de forma local.
 El backend y el frontend de la etapa 2 siguen desplegados en la nube sin cambios.
 
 ## 2. Rama de trabajo
