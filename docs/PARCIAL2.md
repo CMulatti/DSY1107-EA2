@@ -226,7 +226,7 @@ sin editar código ni reiniciar nada.
 - Tipo de exchange: solo `direct`, `topic` o `fanout`.
 - En bindings, `queue` y `exchange` obligatorios, y `routingKey` presente (puede ser vacía: un fanout la ignora).
 
-Todas las colas que crea son **quorum**, regla de la clase. La respuesta de error de validación
+Todas las colas que crea son **quorum**. La respuesta de error de validación
 lista cada campo con su mensaje.
 
 ## 11. Códigos HTTP del administrador
