@@ -144,10 +144,10 @@ Los nombres de colas, exchanges y routing keys están escritos **una sola vez**,
 - Se publica **después de guardar**: nunca se anuncia una solicitud que no quedó en la base de datos.
 - **Publicar nunca rompe la petición.** `SolicitudEventPublisher` atrapa cualquier error, lo escribe
   en el log (`[RABBIT] No se pudo publicar ...`) y la solicitud se crea igual.
-- `app.rabbit.enabled: false` desactiva la publicación sin tocar código.
 - El indicador de salud de RabbitMQ está desactivado (`management.health.rabbit.enabled: false`),
   para que una caída de RabbitMQ no marque al backend como caído.
-- Si RabbitMQ no responde, la conexión falla rápido (`connection-timeout: 2s`).
+- Si RabbitMQ no responde, el backend deja de esperar a los 2 segundos (`connection-timeout: 2s`)
+  y la petición sigue. Si el puerto está cerrado, el rechazo es inmediato.
 
 Ejemplo de mensaje (JSON):
 
