@@ -351,22 +351,8 @@ Usar nombres de prueba (`demo.*`) y **no** borrar las seis colas del sistema.
 | Con el cluster detenido, `GET /queues/demo.cola` | 503 `RabbitMQ no está disponible` |
 | `DELETE /bindings`, `/queues/demo.cola` y `/exchanges/demo.eventos` | 204, y desaparecen del panel |
 
-## 13. Decisiones y limitaciones
 
-- **Sin autenticación en `rabbitadmin`**: cualquiera que llegue al puerto 8097 puede borrar cualquier cola,
-  incluidas las del sistema. Aceptable en local; antes de llevarlo a la nube habría que protegerlo.
-- **Eventos perdidos si RabbitMQ está caído**: la solicitud se guarda, pero su evento no se encola en ningún lado.
-  La solución completa es el patrón *outbox* (guardar el evento en la base y publicarlo después); queda fuera del alcance.
-- **Detección de duplicados**: el `messageId` ya viaja en cada evento, pero los consumidores todavía no
-  descartan repetidos. Un duplicado es posible por la entrega "al menos una vez".
-- **Backend en la nube**: el backend desplegado en ECS es el de la etapa 2. Si esta rama se mezclara con
-  `main`, intentaría publicar en `localhost` y fallaría en silencio (la petición seguiría funcionando).
-  Para evitarlo habría que fijar `APP_RABBIT_ENABLED=false` en `ecs.tf` o llevar RabbitMQ a la nube.
-- **Nodos**: la rúbrica menciona dos nodos y las notas de la clase tres; se implementaron tres.
-
-
-
-## 14. Evidencias
+## 13. Evidencias
 
 Las capturas de pantalla (cluster, colas, exchanges, DLQ, logs y respuestas de `rabbitadmin`)
 se encuentran en el informe.
