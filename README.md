@@ -1,4 +1,5 @@
 # DSY1107 - PARCIAL2 - Solicitudes de Vacaciones
+> **Parcial 2 (RabbitMQ):** ver [docs/PARCIAL2.md](docs/PARCIAL2.md). El trabajo está en la rama `etapa3-rabbitmq`.
 
 Sistema de solicitante/aprobador: un usuario solicita vacaciones, otro las
 aprueba o rechaza con un comentario.
