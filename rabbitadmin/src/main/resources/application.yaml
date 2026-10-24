@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: rabbitadmin
+
+  rabbitmq:
+    addresses: localhost:5672,localhost:5673,localhost:5674
+    address-shuffle-mode: random
+    username: admin
+    password: ${RABBITMQ_PASSWORD:admin123}
+
+server:
+  port: 8097
